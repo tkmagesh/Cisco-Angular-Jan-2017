@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Bug Tracker</title>
+	<script type="text/usecases">
+		1. Add a new bug
+		2. List all the bugs
+		3. Toggle the 'closed' status of a bug
+		4. Remove closed bugs
+		5. Display stats (# of closed bugs / total # of bugs)
+		6. Sort the bugs
+		7. Search for the bugs
+		8. Improvise bug display
+		9. Persist the bugs in the 'localStorage'
+		10. Display 'createdAt' for each bug
+		11. Persist the bugs in the server
+		12. Make the bugs accessible through unique url
+	</script>
+	<style>
+		section{
+			margin-bottom: 10px;
+		}
+		.stats, .bugname{
+			font-size: 20pt;
+		}
+		.bugname{
+			cursor: pointer;
+		}
+		.closed{
+			color : red;
+			text-decoration: line-through;
+			font-style: italic;
+			font-weight: bold;
+		}
+		ol{
+			width: 500px;
+			list-style: none;
+		}
+		li{
+			margin-bottom: 10px;
+			border : 1px solid gray;
+			background-color: #e7e7e7;
+			padding: 5px;
+			border-radius: 5px;
+		}
+
+	</style>
+</head>
+<body>
+	<h1>Bug Tracker</h1>
+	<hr>
+	<section class="stats">
+		<span class="closed">2</span>
+		<span> / </span>
+		<span>5</span>
+	</section>
+	<section class="search">
+		<label for="">Search :</label>
+		<input type="text" name="" id="">
+		<label for="">Closed ? :</label>
+		<input type="checkbox" name="" id="">
+		<input type="button" value="Show All">
+	</section>
+	<section class="sort">
+		<label for="">Order By :</label>
+		<input type="text" name="" id="">
+		<label for="">Descending ? :</label>
+		<input type="checkbox" name="" id="">
+	</section>
+	<section class="edit">
+		<label for="">Bug Name :</label>
+		<input type="text" name="" id="">
+		<input type="button" value="Create New">
+	</section>
+	<section class="list">
+		<ol>
+			<li>
+				<span class="bugname">This is Bug - 1</span>
+				<div class="datetime">[Created At]</div>
+			</li>
+			<li>
+				<span class="bugname closed">This is Bug - 2</span>
+				<div class="datetime">[Created At]</div>
+			</li>
+		</ol>
+		<input type="button" value="Remove Closed">
+	</section>
+</body>
+</html>
