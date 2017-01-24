@@ -100,9 +100,12 @@
 	</section>
 	<section class="sort">
 		<label for="">Order By :</label>
-		<input type="text" name="" id="">
+		<select ng-model="sortBug">
+			<option value="name">Name</option>
+			<option value="isClosed">Status</option>
+		</select>
 		<label for="">Descending ? :</label>
-		<input type="checkbox" name="" id="">
+		<input type="checkbox" ng-model="sortOrder">
 	</section>
 	<section class="edit">
 		<label for="">Bug Name :</label>
@@ -111,7 +114,7 @@
 	</section>
 	<section class="list">
 		<ol>
-			<li ng-repeat="bug in ( bugs | filter:searchBug ) "  >
+			<li ng-repeat="bug in ( bugs | filter:searchBug | orderBy:sortBug:sortOrder ) "  >
 				<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug.name}}</span>
 				<div class="datetime">[Created At]</div>
 			</li>
