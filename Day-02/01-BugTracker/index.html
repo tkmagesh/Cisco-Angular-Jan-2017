@@ -52,7 +52,16 @@
 		bugTrackerApp.controller("bugsController", function($scope){
 			$scope.bugs = [];
 			$scope.addNew = function(bugName){
-				$scope.bugs.push(bugName);
+				var newBug = {
+					name : bugName,
+					isClosed : false
+				};
+				$scope.bugs.push(newBug);
+			};
+
+			$scope.toggle = function(bug){
+				
+				bug.isClosed = !bug.isClosed;
 			};
 		});
 
@@ -86,8 +95,8 @@
 	</section>
 	<section class="list">
 		<ol>
-			<li ng-repeat="bug in bugs track by $index">
-				<span class="bugname">{{bug}}</span>
+			<li ng-repeat="bug in bugs" ng-click="toggle(bug)" >
+				<span class="bugname" ng-class="{closed : bug.isClosed}">{{bug.name}}</span>
 				<div class="datetime">[Created At]</div>
 			</li>
 			
