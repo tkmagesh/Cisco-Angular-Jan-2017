@@ -50,7 +50,11 @@
 	<script>
 		var bugTrackerApp = angular.module("bugTrackerApp", []);
 		bugTrackerApp.controller("bugsController", function($scope){
-			$scope.bugs = [];
+			$scope.bugs = [
+				{name : 'server communication failure', isClosed : false},
+				{name : 'user actions not recognised', isClosed : true},
+				{name : 'application not responsive', isClosed : false},
+			];
 			$scope.addNew = function(bugName){
 				var newBug = {
 					name : bugName,
@@ -89,10 +93,10 @@
 	</section>
 	<section class="search">
 		<label for="">Search :</label>
-		<input type="text" name="" id="">
+		<input type="text" ng-model="searchBugName">
 		<label for="">Closed ? :</label>
-		<input type="checkbox" name="" id="">
-		<input type="button" value="Show All">
+		<input type="checkbox" ng-model="searchBugStatus">
+		<input type="button" value="Show All" ng-click="searchBugStatus=''">
 	</section>
 	<section class="sort">
 		<label for="">Order By :</label>
@@ -107,7 +111,7 @@
 	</section>
 	<section class="list">
 		<ol>
-			<li ng-repeat="bug in bugs"  >
+			<li ng-repeat="bug in ( bugs | filter:{name : searchBugName, isClosed : searchBugStatus} ) "  >
 				<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug.name}}</span>
 				<div class="datetime">[Created At]</div>
 			</li>
