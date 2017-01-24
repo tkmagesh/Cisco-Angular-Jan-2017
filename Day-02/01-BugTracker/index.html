@@ -50,27 +50,37 @@
 	<script>
 		var bugTrackerApp = angular.module("bugTrackerApp", []);
 
-		bugTrackerApp.value("bugOperations", {
-			createNew : function(bugName){
-				return {
-					name : bugName,
-					isClosed : false
-				};
-			},
-			toggle : function(bug){
-				bug.isClosed = !bug.isClosed;
+		bugTrackerApp.value('defaultBugName', '[Default Bug]')
+
+		
+		
+
+		bugTrackerApp.factory("bugOperations", function (defaultBugName){
+			var currentBugId = 0;	
+			return {
+				createNew : function(bugName){
+					return {
+						id : ++currentBugId,
+						name : bugName || defaultBugName,
+						isClosed : false
+					};
+				},
+				toggle : function(bug){
+					bug.isClosed = !bug.isClosed;
+				}
 			}
 		});
 
 		bugTrackerApp.controller("bugsController", function($scope, bugOperations){
 
 			$scope.bugs = [
-				{name : 'server communication failure', isClosed : false},
-				{name : 'user actions not recognised', isClosed : true},
-				{name : 'application not responsive', isClosed : false},
+				bugOperations.createNew('server communication failure'),
+				bugOperations.createNew('user actions not recognised'),
+				bugOperations.createNew('application not responsive'),
 			];
 
 			$scope.addNew = function(bugName){
+				//var newBugName = bugName || defaultBugName;
 				var newBug = bugOperations.createNew(bugName);
 				$scope.bugs.push(newBug);
 			};
@@ -129,6 +139,7 @@
 			<li ng-repeat="bug in ( bugs | filter:searchBug | orderBy:sortBug:sortOrder ) "  >
 				<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug.name}}</span>
 				<div class="datetime">[Created At]</div>
+				<i>[{{bug.id}}]</i>
 			</li>
 			
 		</ol>
