@@ -86,14 +86,11 @@
 	</section>
 	<section class="list">
 		<ol>
-			<li>
-				<span class="bugname">This is Bug - 1</span>
+			<li ng-repeat="bug in bugs track by $index">
+				<span class="bugname">{{bug}}</span>
 				<div class="datetime">[Created At]</div>
 			</li>
-			<li>
-				<span class="bugname closed">This is Bug - 2</span>
-				<div class="datetime">[Created At]</div>
-			</li>
+			
 		</ol>
 		<input type="button" value="Remove Closed">
 	</section>
