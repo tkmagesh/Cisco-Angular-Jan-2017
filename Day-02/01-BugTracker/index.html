@@ -49,6 +49,19 @@
 	<script src="angular.js"></script>
 	<script>
 		var bugTrackerApp = angular.module("bugTrackerApp", []);
+
+		var bugOperations = {
+			createNew : function(bugName){
+				return {
+					name : bugName,
+					isClosed : false
+				};
+			},
+			toggle : function(bug){
+				bug.isClosed = !bug.isClosed;
+			}
+		};
+
 		bugTrackerApp.controller("bugsController", function($scope){
 			$scope.bugs = [
 				{name : 'server communication failure', isClosed : false},
@@ -56,16 +69,13 @@
 				{name : 'application not responsive', isClosed : false},
 			];
 			$scope.addNew = function(bugName){
-				var newBug = {
-					name : bugName,
-					isClosed : false
-				};
+				var newBug = bugOperations.createNew(bugName);
 				$scope.bugs.push(newBug);
 			};
 
 			$scope.toggle = function(bug){
+				bugOperations.toggle(bug);
 				
-				bug.isClosed = !bug.isClosed;
 			};
 			$scope.removeClosed = function(){
 				for(var i=$scope.bugs.length-1; i >=0; i--)
