@@ -52,9 +52,6 @@
 
 		bugTrackerApp.value('defaultBugName', '[Default Bug]')
 
-		
-		
-
 		bugTrackerApp.factory("bugOperations", function (defaultBugName){
 			var currentBugId = 0;	
 			return {
@@ -80,7 +77,6 @@
 			];
 
 			$scope.addNew = function(bugName){
-				//var newBugName = bugName || defaultBugName;
 				var newBug = bugOperations.createNew(bugName);
 				$scope.bugs.push(newBug);
 			};
@@ -100,6 +96,12 @@
 					if ($scope.bugs[i].isClosed)
 						++closedCount;
 				return closedCount;
+			}
+		});
+
+		bugTrackerApp.filter('trimText', /*factory returning the actual filter function*/ function(){
+			return /* the actual filter function*/ function(data){
+				return data.length < 30 ? data : data.substr(0,30) + '...';
 			}
 		});
 
@@ -137,7 +139,7 @@
 	<section class="list">
 		<ol>
 			<li ng-repeat="bug in ( bugs | filter:searchBug | orderBy:sortBug:sortOrder ) "  >
-				<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug.name}}</span>
+				<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug.name | trimText}}</span>
 				<div class="datetime">[Created At]</div>
 				<i>[{{bug.id}}]</i>
 			</li>
