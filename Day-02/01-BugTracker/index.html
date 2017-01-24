@@ -13,6 +13,20 @@
 		7. Search for the bugs
 		8. Improvise bug display
 		9. Persist the bugs in the 'localStorage'
+			window.localStorage
+			-------------------
+			* key/value store
+			* both key and value MUST be strings
+			* key has to be unique
+			* use angular.toJson() and angular.fromJson() for serialization and deserialization respectively
+			* APIs
+			======
+				- setItem(key, value)
+				- getItem(key) //=> value
+				- removeItem(key)
+				- key(index) //=> key at index
+				- clear()
+				- length
 		10. Display 'createdAt' for each bug
 		11. Persist the bugs in the server
 		12. Make the bugs accessible through unique url
