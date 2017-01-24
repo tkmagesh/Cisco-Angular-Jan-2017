@@ -93,10 +93,10 @@
 	</section>
 	<section class="search">
 		<label for="">Search :</label>
-		<input type="text" ng-model="searchBugName">
+		<input type="text" ng-model="searchBug.name">
 		<label for="">Closed ? :</label>
-		<input type="checkbox" ng-model="searchBugStatus">
-		<input type="button" value="Show All" ng-click="searchBugStatus=''">
+		<input type="checkbox" ng-model="searchBug.isClosed">
+		<input type="button" value="Show All" ng-click="searchBug=''">
 	</section>
 	<section class="sort">
 		<label for="">Order By :</label>
@@ -111,7 +111,7 @@
 	</section>
 	<section class="list">
 		<ol>
-			<li ng-repeat="bug in ( bugs | filter:{name : searchBugName, isClosed : searchBugStatus} ) "  >
+			<li ng-repeat="bug in ( bugs | filter:searchBug ) "  >
 				<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug.name}}</span>
 				<div class="datetime">[Created At]</div>
 			</li>
