@@ -90,18 +90,25 @@
 					if ($scope.bugs[i].isClosed)
 						$scope.bugs.splice(i,1);
 			};
-			$scope.getClosedCount = function(){
+			
+		});
+
+		bugTrackerApp.filter('closedCount', function(){
+			return function(bugs){
 				var closedCount = 0;
-				for(var i=0; i < $scope.bugs.length; i++)
-					if ($scope.bugs[i].isClosed)
+				for(var i=0; i < bugs.length; i++)
+					if (bugs[i].isClosed)
 						++closedCount;
 				return closedCount;
 			}
 		});
 
-		bugTrackerApp.filter('trimText', /*factory returning the actual filter function*/ function(){
-			return /* the actual filter function*/ function(data){
-				return data.length < 30 ? data : data.substr(0,30) + '...';
+		bugTrackerApp.value("defaultTrimLength", 30);
+
+		bugTrackerApp.filter('trimText', function(defaultTrimLength){
+			return function(data, trimLength){
+				trimLength = trimLength || defaultTrimLength;
+				return data.length < trimLength ? data : data.substr(0,trimLength) + '...';
 			}
 		});
 
@@ -111,7 +118,7 @@
 	<h1>Bug Tracker</h1>
 	<hr>
 	<section class="stats">
-		<span class="closed">{{getClosedCount()}}</span>
+		<span class="closed">{{ bugs | closedCount}}</span>
 		<span> / </span>
 		<span>{{bugs.length}}</span>
 	</section>
