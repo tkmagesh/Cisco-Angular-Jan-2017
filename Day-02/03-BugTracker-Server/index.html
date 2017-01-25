@@ -87,11 +87,31 @@
 			}
 		});
 
+		bugTrackerApp.factory("bugService", function($http, bugOperations){
+			function getAllBugs(){
+				return $http
+							.get('http://localhost:3000/bugs')
+							.then(function(response){
+								return response.data;
+							})
+			}
+			return {
+				getAll : getAllBugs
+			}
+		})
+
 		
 
-		bugTrackerApp.controller("bugsController", function($scope, bugOperations){
+		bugTrackerApp.controller("bugsController", function($scope, bugService){
 
 			$scope.bugs = [];
+
+			bugService
+				.getAll()
+				.then(function(data){
+					$scope.bugs = data;
+				})
+
 
 			$scope.addNew = function(bugName){
 				var newBug = bugOperations.createNew(bugName);
