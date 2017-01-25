@@ -61,6 +61,7 @@
 
 	</style>
 	<script src="angular.js"></script>
+	<script src="moment.js"></script>
 	<script>
 		var bugTrackerApp = angular.module("bugTrackerApp", []);
 
@@ -73,7 +74,8 @@
 					return {
 						id : id,
 						name : bugName || defaultBugName,
-						isClosed : false
+						isClosed : false,
+						createdAt : new Date()
 					};
 				},
 				toggle : function(bug){
@@ -158,6 +160,12 @@
 			}
 		});
 
+		bugTrackerApp.filter('elapsed', function(){
+			return function(data){
+				return moment(data).fromNow();
+			};
+		});
+
 	</script>
 </head>
 <body ng-controller="bugsController">
@@ -193,7 +201,7 @@
 		<ol>
 			<li ng-repeat="bug in ( bugs | filter:searchBug | orderBy:sortBug:sortOrder ) "  >
 				<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug.name | trimText}}</span>
-				<div class="datetime">[Created At]</div>
+				<div class="datetime">{{bug.createdAt | elapsed }}</div>
 				<i>[{{bug.id}}]</i>
 			</li>
 			
