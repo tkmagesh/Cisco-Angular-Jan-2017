@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="bugTrackerApp">
+<head>
+	<meta charset="UTF-8">
+	<title>Bug Tracker</title>
+	<script type="text/usecases">
+		1. Add a new bug
+		2. List all the bugs
+		3. Toggle the 'closed' status of a bug
+		4. Remove closed bugs
+		5. Display stats (# of closed bugs / total # of bugs)
+		6. Sort the bugs
+		7. Search for the bugs
+		8. Improvise bug display
+		9. Persist the bugs in the 'localStorage'
+			window.localStorage
+			-------------------
+			* key/value store
+			* both key and value MUST be strings
+			* key has to be unique
+			* use angular.toJson() and angular.fromJson() for serialization and deserialization respectively
+			* APIs
+			======
+				- setItem(key, value)
+				- getItem(key) //=> value
+				- removeItem(key)
+				- key(index) //=> key at index
+				- clear()
+				- length
+		10. Display 'createdAt' for each bug
+		11. Persist the bugs in the server
+		12. Make the bugs accessible through unique url
+	</script>
+	<style>
+		section{
+			margin-bottom: 10px;
+		}
+		.stats, .bugname{
+			font-size: 20pt;
+		}
+		.bugname{
+			cursor: pointer;
+		}
+		.closed{
+			color : red;
+			text-decoration: line-through;
+			font-style: italic;
+			font-weight: bold;
+		}
+		ol{
+			width: 500px;
+			list-style: none;
+		}
+		li{
+			margin-bottom: 10px;
+			border : 1px solid gray;
+			background-color: #e7e7e7;
+			padding: 5px;
+			border-radius: 5px;
+		}
+
+	</style>
+	<script src="angular.js"></script>
+	<script src="angular-route.js"></script>
+	<script src="moment.js"></script>
+	<script src="utils.js"></script>
+
+	<script>
+
+		var bugTrackerApp = angular.module("bugTrackerApp", ["utils", "ngRoute"]);
+
+		bugTrackerApp.config(function($routeProvider){
+			$routeProvider
+				.when('/bugs', {
+					//template : '<h1>All the bugs will be displayed here</h1>'
+					templateUrl : "templates/bug-list.template.html",
+					controller : "bugsController"
+				})
+				.when('/new', {
+					//template : '<h1>A new bug will be added here</h1>'
+					templateUrl : "templates/bug-new.template.html",
+					controller : "newBugController"
+				})
+				.when('/bugs/:id', {
+					templateUrl : "templates/bug-info.template.html",
+					controller : "bugInfoController"
+				})
+				.otherwise({
+					redirectTo :'/bugs'
+				});
+		});
+
+		bugTrackerApp.value('defaultBugName', '[Default Bug]')
+
+		bugTrackerApp.factory("bugOperations", function (defaultBugName){
+				
+			return {
+				createNew : function(id, bugName){
+					return {
+						id : id,
+						name : bugName || defaultBugName,
+						isClosed : false,
+						createdAt : new Date()
+					};
+				},
+				toggle : function(bug){
+					bug.isClosed = !bug.isClosed;
+				}
+			}
+		});
+
+		bugTrackerApp.factory("bugService", function($http, bugOperations){
+			function getAllBugs(){
+				return $http
+							.get('http://localhost:3000/bugs')
+							.then(function(response){
+								return response.data;
+							})
+			}
+
+			function getBug(id){
+				return $http
+							.get('http://localhost:3000/bugs/' + id)
+							.then(function(response){
+								return response.data;
+							})
+			}
+			function addNewBug(bugName){
+				var newBugData = bugOperations.createNew(0, bugName);
+				return $http
+							.post('http://localhost:3000/bugs', newBugData)
+							.then(function(response){
+								return response.data;
+							})
+			}
+			function toggleBug(bug){
+				bugOperations.toggle(bug);
+				return $http
+					.put('http://localhost:3000/bugs/'+ bug.id, bug)
+					.then(function(response){
+						return response.data;
+					});
+			}
+			function removeBug(bug){
+				return $http
+					.delete('http://localhost:3000/bugs/'+ bug.id)
+					.then(function(response){
+						return response.data;
+					});	
+			}
+			return {
+				getAll : getAllBugs,
+				get  : getBug,
+				addNew : addNewBug,
+				toggle : toggleBug,
+				remove : removeBug
+			}
+		})
+
+		bugTrackerApp.controller("newBugController", function($scope, bugService, $location){
+			$scope.addNew = function(bugName){
+				bugService
+					.addNew(bugName)
+					.then(function(newBug){
+						$location.path('/bugs');
+					})
+				
+			};
+		});
+
+		bugTrackerApp.controller("bugInfoController", function($scope, bugService, $routeParams){
+			bugService
+					.get($routeParams.id)
+					.then(function(bug){
+						$scope.bug = bug;
+						console.log(bug);
+					});
+		});
+
+		bugTrackerApp.controller("bugsController", function($scope, bugService){
+
+			$scope.bugs = [];
+
+			bugService
+				.getAll()
+				.then(function(data){
+					$scope.bugs = data;
+				})
+
+
+			$scope.addNew = function(bugName){
+				bugService
+					.addNew(bugName)
+					.then(function(newBug){
+						$scope.bugs.push(newBug);		
+					})
+				
+			};
+
+			$scope.toggle = function(bug){
+				bugService.toggle(bug);
+			};
+			$scope.removeClosed = function(){
+				for(var i=$scope.bugs.length-1; i >=0; i--)
+					if ($scope.bugs[i].isClosed){
+						bugService.remove($scope.bugs[i]);
+						$scope.bugs.splice(i,1);
+					}
+			};
+			
+		});
+
+		bugTrackerApp.filter('closedCount', function(){
+			return function(bugs){
+				var closedCount = 0;
+				for(var i=0; i < bugs.length; i++)
+					if (bugs[i].isClosed)
+						++closedCount;
+				return closedCount;
+			}
+		});
+
+		
+
+	</script>
+</head>
+<body>
+	<h1>Bug Tracker</h1>
+	<hr>
+	<ng-view></ng-view>
+</body>
+</html>
